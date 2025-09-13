@@ -2,8 +2,8 @@ name: GitHub Portfolio Refresher
 
 on:
   schedule:
-    - cron: "0 10 * * *"
-  workflow_dispatch:
+    - cron: "0 10 * * *"   # Roz subah 10:00 UTC (3:30 PM IST) pe chalega
+  workflow_dispatch:        # Manually bhi run kar sakte ho
 
 jobs:
   refresh:
@@ -16,7 +16,7 @@ jobs:
       - name: Update refresh file
         run: |
           date "+%Y-%m-%d %H:%M:%S" >> refresh.md
-          git config --global user.name "YourGitHubUsername"
+          git config --global user.name "cyberfortify"
           git config --global user.email "youremail@example.com"
           git add refresh.md
           git commit -m "Auto refresh at $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
@@ -29,6 +29,7 @@ jobs:
 
       - name: Send Telegram Notification
         run: |
+          TIMESTAMP=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M:%S')
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
-          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -d text="🤣 Arre Bhidu! GitHub Portfolio ka jugaad refresh ho gaya! ⏰ Commit gaya at $(date '+%Y-%m-%d %H:%M:%S')"
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="🤣 Arre Bhidu! GitHub Portfolio ka jugaad refresh ho gaya! ⏰ Commit gaya at $(date '+%Y-%m-%d %H:%M:%S')"
