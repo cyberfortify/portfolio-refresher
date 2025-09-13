@@ -1,0 +1,28 @@
+name: GitHub Portfolio Refresher
+
+# Kab chalega workflow
+on:
+  schedule:
+    - cron: "0 10 * * *"   # Har din 10:00 AM UTC
+  workflow_dispatch:       # Manual trigger bhi possible
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Update refresh file
+        run: |
+          date >> refresh.md
+          git config --global user.name "YourGitHubUsername"
+          git config --global user.email "youremail@example.com"
+          git add refresh.md
+          git commit -m "Auto refresh at $(date)" || echo "No changes to commit"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
