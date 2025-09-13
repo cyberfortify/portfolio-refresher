@@ -1,10 +1,9 @@
 name: GitHub Portfolio Refresher
 
-# Kab chalega workflow
 on:
   schedule:
-    - cron: "0 10 * * *"   # Har din 10:00 AM UTC
-  workflow_dispatch:       # Manual trigger bhi possible
+    - cron: "0 10 * * *"
+  workflow_dispatch:
 
 jobs:
   refresh:
@@ -16,14 +15,20 @@ jobs:
 
       - name: Update refresh file
         run: |
-          date >> refresh.md
-          git config --global user.name "cyberfortify"
-          git config --global user.email "work.aditya2010@gmail.com"
+          date "+%Y-%m-%d %H:%M:%S" >> refresh.md
+          git config --global user.name "YourGitHubUsername"
+          git config --global user.email "youremail@example.com"
           git add refresh.md
-          git commit -m "Auto refresh at $(date)" || echo "No changes to commit"
+          git commit -m "Auto refresh at $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
 
       - name: Push Changes
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
+
+      - name: Send Telegram Notification
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="✅ GitHub Portfolio Refresher ran successfully! Commit pushed at $(date '+%Y-%m-%d %H:%M:%S')"
