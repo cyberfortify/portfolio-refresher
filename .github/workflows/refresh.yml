@@ -17,8 +17,8 @@ jobs:
       - name: Update refresh file
         run: |
           date >> refresh.md
-          git config --global user.name "YourGitHubUsername"
-          git config --global user.email "youremail@example.com"
+          git config --global user.name "cyberfortify"
+          git config --global user.email "work.aditya2010@gmail.com"
           git add refresh.md
           git commit -m "Auto refresh at $(date)" || echo "No changes to commit"
 
