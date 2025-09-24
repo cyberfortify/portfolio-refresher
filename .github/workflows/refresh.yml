@@ -2,7 +2,7 @@ name: GitHub Portfolio Refresher
 
 on:
   schedule:
-    - cron: "0 10 * * *"   # Roz subah 10:00 UTC (3:30 PM IST) pe chalega
+    - cron: "0 10 * * *"   # Roz subah 10:00 UTC (3:30 PM IST)
   workflow_dispatch:        # Manually bhi run kar sakte ho
 
 jobs:
@@ -15,21 +15,24 @@ jobs:
 
       - name: Update refresh file
         run: |
-          date "+%Y-%m-%d %H:%M:%S" >> refresh.md
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "Last refreshed at $TIMESTAMP" >> refresh.md
+
           git config --global user.name "cyberfortify"
-          git config --global user.email "youremail@example.com"
+          git config --global user.email "work.aditya2010@gmail.com" 
+          
           git add refresh.md
-          git commit -m "Auto refresh at $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git commit -m "Auto refresh at $TIMESTAMP"
 
       - name: Push Changes
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: main   # Agar tumhare repo ka default branch master hai to yaha master likho
 
       - name: Send Telegram Notification
         run: |
           TIMESTAMP=$(date -d '5 hours 30 minutes' '+%Y-%m-%d %H:%M:%S')
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
             -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d text="🤣 Arre Bhidu! GitHub Portfolio ka jugaad refresh ho gaya! ⏰ Commit gaya at $(date '+%Y-%m-%d %H:%M:%S')"
+            -d text="✅ GitHub Portfolio auto-refresh ho gaya! ⏰ Commit time (IST): $TIMESTAMP"
